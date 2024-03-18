@@ -1,6 +1,7 @@
 ﻿<Page x:Class="SpaceWars.Game"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:gif="http://wpfanimatedgif.codeplex.com"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SpaceWars"
@@ -12,9 +13,9 @@
         <Rectangle HorizontalAlignment="Center" Height="25" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="Black"/>
         <Label x:Name="Score" Content="Score: 0" HorizontalAlignment="Left" Margin="285,-1,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold"/>
         <Canvas x:Name="gamecanvas" Height="600" Margin="0,30,0,220">
+            <Image gif:ImageBehavior.AnimatedSource="Resources/background.gif" Height="630" Width="700" Stretch="Fill" />
             <Image x:Name="player" Height="100" Width="100" Source="/Resources/player.png" Canvas.Bottom="0" Canvas.Left="300"/>
         </Canvas>
-
         <Rectangle HorizontalAlignment="Center" Height="180" Margin="0,670,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Grid.Column="1" >
             <Rectangle.Fill>
                 <ImageBrush ImageSource="/Resources/background.gif" Stretch="UniformToFill"/>

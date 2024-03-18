@@ -28,6 +28,7 @@ namespace SpaceWars
         private DispatcherTimer gameTimer = new DispatcherTimer();
         private DispatcherTimer regen = new DispatcherTimer();
         private DispatcherTimer shooterTimer = new DispatcherTimer();
+        private DispatcherTimer progressTimer = new DispatcherTimer();
         private bool left = false;
         private bool right = false;
 
@@ -35,7 +36,7 @@ namespace SpaceWars
         public Game()
         {
             InitializeComponent();
-            gameTimer.Interval = TimeSpan.FromMilliseconds(16);
+            gameTimer.Interval = TimeSpan.FromMilliseconds(24);
             gameTimer.Tick += new EventHandler(GameTick);
             gameTimer.Start();
             shooterTimer.Interval = TimeSpan.FromMilliseconds(1000);
@@ -44,12 +45,14 @@ namespace SpaceWars
             regen.Interval = TimeSpan.FromMilliseconds(3000);
             regen.Tick += new EventHandler(regenhp);
             regen.Start();
+            progressTimer.Interval = TimeSpan.FromMilliseconds(300);
+            progressTimer.Tick += new EventHandler(progressTick);
+            progressTimer.Start();
             this.PreviewKeyDown += Grid_KeyDown;
             this.PreviewKeyUp += Grid_KeyUp;
             this.Focusable = true;
             this.Focus();
         }
-
 
 
 
@@ -88,8 +91,65 @@ namespace SpaceWars
             moveEnemy();
             moveBullet();
             hitBullet();
-            checkObjects();
             visualize();
+
+        }
+
+        private void progressTick(object? sender, EventArgs e)
+        {
+            checkObjects();
+            progress();
+        }
+        private void progress()
+        {
+            if(details.Score == details.Progressed )
+            {
+                details.Enemyspeed += 0.1;
+                details.Progressed *= 2;
+                details.Maxenemys += 1;
+            }
+
+
+            if (details.Money < details.Upgradecosts[0])
+            {
+                Horizontalspeedbtn.IsEnabled = false;
+            }
+            else
+            {
+                Horizontalspeedbtn.IsEnabled = true;
+            }
+            if (details.Money < details.Upgradecosts[1])
+            {
+                Income.IsEnabled = false;
+            }
+            else
+            {
+                Income.IsEnabled = true;
+            }
+            if (details.Money < details.Upgradecosts[2] && details.Firerate > 500)
+            {
+                Firerate.IsEnabled = false;
+            }
+            else
+            {
+                Firerate.IsEnabled = true;
+            }
+            if (details.Money < details.Upgradecosts[3])
+            {
+                MaxHP.IsEnabled = false;
+            }
+            else
+            {
+                MaxHP.IsEnabled= true;
+            }
+            if (details.Money < details.Upgradecosts[4])
+            {
+                HP_Regen.IsEnabled = false;
+            }
+            else
+            {
+                HP_Regen.IsEnabled = true;
+            }
 
         }
 
@@ -183,7 +243,7 @@ namespace SpaceWars
         {
             foreach (Border bullet in bullets)
             {
-                Canvas.SetTop(bullet, Canvas.GetTop(bullet) - details.Enemyspeed);
+                Canvas.SetTop(bullet, Canvas.GetTop(bullet) - 2);
             }
         }
 
@@ -304,31 +364,38 @@ namespace SpaceWars
         //---------------------------------------------------------------Upgradek
         private void Horizontalspeedbtn_Click(object sender, RoutedEventArgs e)
         {
-            details.Playerspeed += 2; 
+            details.Playerspeed += 2;
+            details.Money -= details.Upgradecosts[0];
+            details.Upgradecosts[0] *= 2; 
         }
 
         private void Income_Click(object sender, RoutedEventArgs e)
         {
             details.Income *= 1.5;
+            details.Money -= details.Upgradecosts[1];
+            details.Upgradecosts[1] *= 2;
         }
 
         private void Firerate_Click(object sender, RoutedEventArgs e)
         {
-            if(shooterTimer.Interval != TimeSpan.FromMilliseconds(500))
-            {
-                shooterTimer.Interval -= TimeSpan.FromMilliseconds(50);
-            }
-
+            details.Firerate -= 50;
+            shooterTimer.Interval = TimeSpan.FromMilliseconds(details.Firerate);
+            details.Money -= details.Upgradecosts[2];
+            details.Upgradecosts[2] *= 2;
         }
 
         private void MaxHP_Click(object sender, RoutedEventArgs e)
         {
             details.Maxhp +=50;
+            details.Money -= details.Upgradecosts[3];
+            details.Upgradecosts[3] *= 2;
         }
 
         private void HP_Regen_Click(object sender, RoutedEventArgs e)
         {
             details.Hpregen += 5;
+            details.Money -= details.Upgradecosts[4];
+            details.Upgradecosts[4] *= 2;
         }
     }
 
@@ -401,23 +468,29 @@ namespace SpaceWars
         private int maxhp;
         private int hpregen;
         private int playerspeed;
-        private int enemyspeed;
+        private double enemyspeed;
         private double income;
         private int firerate;
         private int actualHP;
+        private int progressed;
+        int[] upgradecosts;
+
 
         public GameDetails()
         {
-            Maxenemys = 9;
+            Maxenemys = 3;
             Score = 0;
             Money = 0;
             Playerspeed = 10;
             Income = 10;
             enemyspeed = 1;
-            firerate = 1000;
+            Firerate = 1000;
             Maxhp = 100;
             hpregen = 0;
             actualHP = 100;
+            Progressed = 30;
+            firerate = 1000;
+            upgradecosts = [10, 10, 10, 10, 10];
         }
 
         public int Maxenemys { get => maxenemys; set => maxenemys = value; }
@@ -426,8 +499,11 @@ namespace SpaceWars
         public int Maxhp { get => maxhp; set => maxhp = value; }
         public int Hpregen { get => hpregen; set => hpregen = value; }
         public int Playerspeed { get => playerspeed; set => playerspeed = value; }
-        public int Enemyspeed { get => enemyspeed; set => enemyspeed = value; }
+        public double Enemyspeed { get => enemyspeed; set => enemyspeed = value; }
         public double Income { get => income; set => income = value; }
         public int ActualHP { get => actualHP; set => actualHP = value; }
+        public int Progressed { get => progressed; set => progressed = value; }
+        public int Firerate { get => firerate; set => firerate = value; }
+        public int[] Upgradecosts { get => upgradecosts; set => upgradecosts = value; }
     }
 }
