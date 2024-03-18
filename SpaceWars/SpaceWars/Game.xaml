@@ -1,0 +1,47 @@
+﻿<Page x:Class="SpaceWars.Game"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SpaceWars"
+      mc:Ignorable="d" 
+      d:DesignHeight="850" d:DesignWidth="700"
+      Title="Game">
+
+    <Grid KeyDown="Grid_KeyDown" KeyUp="Grid_KeyUp">
+        <Rectangle HorizontalAlignment="Center" Height="25" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="Black"/>
+        <Label x:Name="Score" Content="Score: 0" HorizontalAlignment="Left" Margin="285,-1,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold"/>
+        <Canvas x:Name="gamecanvas" Height="600" Margin="0,30,0,220">
+            <Image x:Name="player" Height="100" Width="100" Source="/Resources/player.png" Canvas.Bottom="0" Canvas.Left="300"/>
+        </Canvas>
+
+        <Rectangle HorizontalAlignment="Center" Height="180" Margin="0,670,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Grid.Column="1" >
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="/Resources/background.gif" Stretch="UniformToFill"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle HorizontalAlignment="Center" Height="40" Margin="0,630,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="#FF737373"/>
+
+        <Grid Margin="0,670,0,0" Height="180">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="Horizontalspeedbtn" Content="Horizontal Speed Upgrade" Grid.Column="0" Height="78" Width="79" Click="Horizontalspeedbtn_Click" />
+            <Button x:Name="Income" Content="Income upgrade" Grid.Column="1" Height="78" Width="79" Click="Income_Click"/>
+            <Button x:Name="Firerate" Content="Firerate" Grid.Column="2" Height="78" Width="79" Click="Firerate_Click"/>
+            <Button x:Name="MaxHP" Content="MaxHP" Grid.Column="3" Height="78" Width="79" Click="MaxHP_Click"/>
+            <Button x:Name="HP_Regen" Content="HP Regen" Grid.Column="4" Height="78" Width="79" Click="HP_Regen_Click"/>
+        </Grid>
+        <Rectangle x:Name="actualHPvisual" HorizontalAlignment="Left" Height="40" Margin="0,630,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="#FF26FF08"/>
+        <Label x:Name="actualhptext" Content="100 hp" HorizontalAlignment="Center" Margin="0,632,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.447,-0.019" FontSize="20" FontWeight="Bold" Foreground="White"/>
+        <Label x:Name="MaxHP_Text" Content="100 hp" HorizontalAlignment="Left" Margin="626,632,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.447,-0.019" FontSize="20" FontWeight="Bold" Foreground="White"/>
+        <Label x:Name="_0hp" Content="0 hp" HorizontalAlignment="Left" Margin="0,632,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.447,-0.019" FontSize="20" FontWeight="Bold" Foreground="White"/>
+        <Label x:Name="Money" Content="0 Coin" HorizontalAlignment="Left" Margin="380,-1,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold"/>
+
+    </Grid>
+</Page>
