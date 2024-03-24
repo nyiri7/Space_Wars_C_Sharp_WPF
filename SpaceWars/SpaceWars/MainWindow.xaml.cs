@@ -19,7 +19,16 @@ namespace SpaceWars
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void playOnClick(object sender, RoutedEventArgs e)
+        {
             this.Content = new Game();
+        }
+
+        private void Exit(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
         }
     }
 }

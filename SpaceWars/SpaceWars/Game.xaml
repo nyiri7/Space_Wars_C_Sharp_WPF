@@ -13,14 +13,10 @@
         <Rectangle HorizontalAlignment="Center" Height="25" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="Black"/>
         <Label x:Name="Score" Content="Score: 0" HorizontalAlignment="Left" Margin="285,-1,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold"/>
         <Canvas x:Name="gamecanvas" Height="600" Margin="0,30,0,220">
-            <Image gif:ImageBehavior.AnimatedSource="Resources/background.gif" Height="630" Width="700" Stretch="Fill" />
+            <Image gif:ImageBehavior.AnimatedSource="Resources/background.gif" Height="636" Width="700" Stretch="Fill" HorizontalAlignment="Center" Canvas.Top="-6" VerticalAlignment="Top" />
             <Image x:Name="player" Height="100" Width="100" Source="/Resources/player.png" Canvas.Bottom="0" Canvas.Left="300"/>
         </Canvas>
-        <Rectangle HorizontalAlignment="Center" Height="180" Margin="0,670,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Grid.Column="1" >
-            <Rectangle.Fill>
-                <ImageBrush ImageSource="/Resources/background.gif" Stretch="UniformToFill"/>
-            </Rectangle.Fill>
-        </Rectangle>
+        <Rectangle HorizontalAlignment="Center" Height="180" Margin="0,670,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Grid.Column="1" Fill="Black" />
         <Rectangle HorizontalAlignment="Center" Height="40" Margin="0,630,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="#FF737373"/>
 
         <Grid Margin="0,670,0,0" Height="180">

@@ -11,6 +11,8 @@
   <ItemGroup>
     <None Remove="Resources\background.gif" />
     <None Remove="Resources\enemy.png" />
+    <None Remove="Resources\logo.png" />
+    <None Remove="Resources\Main.gif" />
     <None Remove="Resources\player.png" />
   </ItemGroup>
 
@@ -21,6 +23,12 @@
   <ItemGroup>
     <Resource Include="Resources\background.gif" />
     <Resource Include="Resources\enemy.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Main.gif">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\player.png" />
