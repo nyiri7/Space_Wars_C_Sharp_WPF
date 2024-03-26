@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -16,6 +17,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Newtonsoft.Json;
 
 namespace SpaceWars
 {
@@ -104,6 +106,7 @@ namespace SpaceWars
         {
             if(details.Score == details.Progressed )
             {
+                details.save();
                 details.Enemyspeed += 0.1;
                 details.Progressed *= 2;
                 details.Maxenemys += 1;
@@ -473,24 +476,73 @@ namespace SpaceWars
         private int firerate;
         private int actualHP;
         private int progressed;
-        int[] upgradecosts;
+        int[]? upgradecosts;
+
+
+        public GameDetails(Boolean gameover)
+        {
+                Maxenemys = 3;
+                Score = 0;
+                Money = 0;
+                Playerspeed = 10;
+                Income = 10;
+                enemyspeed = 1;
+                Firerate = 1000;
+                Maxhp = 100;
+                hpregen = 0;
+                actualHP = 100;
+                Progressed = 30;
+                firerate = 1000;
+                upgradecosts = [10, 10, 10, 10, 10];
+                save();
+        }
 
 
         public GameDetails()
         {
-            Maxenemys = 3;
-            Score = 0;
-            Money = 0;
-            Playerspeed = 10;
-            Income = 10;
-            enemyspeed = 1;
-            Firerate = 1000;
-            Maxhp = 100;
-            hpregen = 0;
-            actualHP = 100;
-            Progressed = 30;
-            firerate = 1000;
-            upgradecosts = [10, 10, 10, 10, 10];
+            GameDetails gameDetails = load();
+            if(gameDetails != null)
+            {
+                Maxenemys = gameDetails.Maxenemys;
+                Score = gameDetails.Score;
+                Money = gameDetails.Money;
+                Playerspeed = gameDetails.Playerspeed;
+                Income = gameDetails.Income;
+                enemyspeed = gameDetails.Enemyspeed;
+                Firerate = gameDetails.Firerate;
+                Maxhp = gameDetails.Maxhp;
+                hpregen = gameDetails.Hpregen;
+                actualHP = gameDetails.ActualHP;
+                Progressed = gameDetails.Progressed;
+                firerate = gameDetails.Firerate;
+                upgradecosts = gameDetails.Upgradecosts;
+            }
+            else
+            {
+                new GameDetails(true);
+            }
+
+
+        }
+
+        public GameDetails load()
+        {
+            try
+            {
+                GameDetails detail = JsonConvert.DeserializeObject<GameDetails>(File.ReadAllText("savegame.json"));
+                return detail;
+            }catch (Exception ex)
+            {
+                return new GameDetails();
+            }
+
+
+        }
+
+        public void save()
+        {
+            ;
+            File.WriteAllText("savegame.json", JsonConvert.SerializeObject(this));
         }
 
         public int Maxenemys { get => maxenemys; set => maxenemys = value; }
