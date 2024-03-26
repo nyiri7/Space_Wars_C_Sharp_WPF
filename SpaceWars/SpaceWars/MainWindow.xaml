@@ -9,8 +9,7 @@
         Title="MainWindow" Height="850" Width="700">
     <Grid>
         <Image gif:ImageBehavior.AnimatedSource="Resources/Main.gif" Height="834" Width="700" Stretch="Fill" HorizontalAlignment="Center" Canvas.Top="-6" VerticalAlignment="Center" />
-        <Button Content="Play" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#B2000000" Foreground="White" BorderBrush="{x:Null}" BorderThickness="1" FontWeight="Bold" FontSize="16" Padding="10,5" Margin="0,235,0,0" Width="200" Height="100" Click="playOnClick"/>
-        <Button Content="Settings" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#B2000000" Foreground="White" BorderBrush="{x:Null}" BorderThickness="1" FontWeight="Bold" FontSize="16" Padding="10,5" Width="200" Height="100"/>
+        <Button Content="Play" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#B2000000" Foreground="White" BorderBrush="{x:Null}" BorderThickness="1" FontWeight="Bold" FontSize="16" Padding="10,5" Margin="0,360,0,0" Width="200" Height="100" Click="playOnClick"/>
         <Button Content="Exit" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#B2000000" Foreground="White" BorderBrush="{x:Null}" BorderThickness="1" FontWeight="Bold" FontSize="16" Padding="10,5" Margin="0,500,0,0" Width="200" Height="100" Click="Exit"/>
         <Image HorizontalAlignment="Center" Height="100" VerticalAlignment="Top" Width="500" Margin="0,95,0,0" Source="Resources/logo.png"/>
     </Grid>
