@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
@@ -18,12 +20,13 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SpaceWars
 {
     public partial class Game : Page
     {
-        private GameDetails details = new GameDetails();
+        private GameDetails details = new GameDetails(false);
         private List<Enemy> enemies = new List<Enemy>();
         private List <Border> bullets = new List<Border>();
         private Random random = new Random();
@@ -33,6 +36,8 @@ namespace SpaceWars
         private DispatcherTimer progressTimer = new DispatcherTimer();
         private bool left = false;
         private bool right = false;
+        private bool pause = false;
+        private bool gameover = false;
 
 
         public Game()
@@ -63,14 +68,18 @@ namespace SpaceWars
 
         private void regenhp(object? sender, EventArgs e)
         {
-            if((details.ActualHP + details.Hpregen) <= details.Maxhp)
+            if (!pause && !gameover)
             {
-                details.ActualHP += details.Hpregen;
+                if ((details.ActualHP + details.Hpregen) <= details.Maxhp)
+                {
+                    details.ActualHP += details.Hpregen;
+                }
+                else
+                {
+                    details.ActualHP = details.Maxhp;
+                }
             }
-            else
-            {
-                details.ActualHP = details.Maxhp;
-            }
+
 
         }
 
@@ -81,78 +90,99 @@ namespace SpaceWars
         //------------------------------- Egyéb metódusok
         private void GameTick(object? sender, EventArgs e)
         {
-            if(left)
+            if (!pause && !gameover)
             {
-                Canvas.SetLeft(player, Canvas.GetLeft(player)-details.Playerspeed);
+                if (left)
+                {
+                    Canvas.SetLeft(player, Canvas.GetLeft(player) - details.Playerspeed);
+                }
+                if (right)
+                {
+                    Canvas.SetLeft(player, Canvas.GetLeft(player) + details.Playerspeed);
+                }
+                generateEnemy();
+                moveEnemy();
+                moveBullet();
+                hitBullet();
+                visualize();
+                intersectEnemyPlayer();
             }
-            if (right)
-            {
-                Canvas.SetLeft(player, Canvas.GetLeft(player) + details.Playerspeed);
-            }
-            generateEnemy();
-            moveEnemy();
-            moveBullet();
-            hitBullet();
-            visualize();
+
 
         }
 
         private void progressTick(object? sender, EventArgs e)
         {
-            checkObjects();
-            progress();
+            if (!pause && !gameover)
+            {
+                checkObjects();
+                progress();
+            }
+
         }
         private void progress()
         {
-            if(details.Score == details.Progressed )
+            if(details.ActualHP <= 0)
             {
-                details.save();
-                details.Enemyspeed += 0.1;
-                details.Progressed *= 2;
-                details.Maxenemys += 1;
+                visualize();
+                gameover = true;
+                UpgradeButtons.Visibility= Visibility.Hidden;
+                GameOverButtons.Visibility = Visibility.Visible;
+                Gameoverpopup.Visibility = Visibility.Visible;
             }
+            else
+            {
+                if (details.Score == details.Progressed)
+                {
+                    details.save();
+                    details.Enemyspeed += 0.1;
+                    details.Progressed *= 2;
+                    details.Maxenemys += 1;
+                }
 
 
-            if (details.Money < details.Upgradecosts[0])
-            {
-                Horizontalspeedbtn.IsEnabled = false;
+                if (details.Money < details.Upgradecosts[0])
+                {
+                    Horizontalspeedbtn.IsEnabled = false;
+                }
+                else
+                {
+                    Horizontalspeedbtn.IsEnabled = true;
+                }
+                if (details.Money < details.Upgradecosts[1])
+                {
+                    Income.IsEnabled = false;
+                }
+                else
+                {
+                    Income.IsEnabled = true;
+                }
+                if (details.Money < details.Upgradecosts[2] && details.Firerate > 500)
+                {
+                    Firerate.IsEnabled = false;
+                }
+                else
+                {
+                    Firerate.IsEnabled = true;
+                }
+                if (details.Money < details.Upgradecosts[3])
+                {
+                    MaxHP.IsEnabled = false;
+                }
+                else
+                {
+                    MaxHP.IsEnabled = true;
+                }
+                if (details.Money < details.Upgradecosts[4])
+                {
+                    HP_Regen.IsEnabled = false;
+                }
+                else
+                {
+                    HP_Regen.IsEnabled = true;
+                }
             }
-            else
-            {
-                Horizontalspeedbtn.IsEnabled = true;
-            }
-            if (details.Money < details.Upgradecosts[1])
-            {
-                Income.IsEnabled = false;
-            }
-            else
-            {
-                Income.IsEnabled = true;
-            }
-            if (details.Money < details.Upgradecosts[2] && details.Firerate > 500)
-            {
-                Firerate.IsEnabled = false;
-            }
-            else
-            {
-                Firerate.IsEnabled = true;
-            }
-            if (details.Money < details.Upgradecosts[3])
-            {
-                MaxHP.IsEnabled = false;
-            }
-            else
-            {
-                MaxHP.IsEnabled= true;
-            }
-            if (details.Money < details.Upgradecosts[4])
-            {
-                HP_Regen.IsEnabled = false;
-            }
-            else
-            {
-                HP_Regen.IsEnabled = true;
-            }
+
 
         }
 
@@ -215,32 +245,36 @@ namespace SpaceWars
 
         private void ShootTick(object? sender, EventArgs e)
         {
-            Rectangle rectangle = new Rectangle
+            if(!pause && ! gameover)
             {
-                Width = 10,
-                Height = 20,
-                Fill = new SolidColorBrush(Colors.White)
-            };
-            Border border = new Border
-            {
-                Width = 5,
-                Height = 20,
-                BorderBrush = Brushes.Red,
-                BorderThickness = new Thickness(2),
-                CornerRadius = new CornerRadius(2),
-                Effect = new BlurEffect
+                Rectangle rectangle = new Rectangle
                 {
-                    Radius = 2,
-                    KernelType = KernelType.Gaussian,
-                    RenderingBias = RenderingBias.Quality
-                }
-            };
+                    Width = 10,
+                    Height = 20,
+                    Fill = new SolidColorBrush(Colors.White)
+                };
+                Border border = new Border
+                {
+                    Width = 5,
+                    Height = 20,
+                    BorderBrush = Brushes.Red,
+                    BorderThickness = new Thickness(2),
+                    CornerRadius = new CornerRadius(2),
+                    Effect = new BlurEffect
+                    {
+                        Radius = 2,
+                        KernelType = KernelType.Gaussian,
+                        RenderingBias = RenderingBias.Quality
+                    }
+                };
 
-            border.Child = rectangle;
-            Canvas.SetLeft(border, Canvas.GetLeft(player) + (player.Width / 2));
-            Canvas.SetTop(border, gamecanvas.ActualHeight - (player.Height));
-            gamecanvas.Children.Add(border);
-            bullets.Add(border);
+                border.Child = rectangle;
+                Canvas.SetLeft(border, Canvas.GetLeft(player) + (player.Width / 2));
+                Canvas.SetTop(border, gamecanvas.ActualHeight - (player.Height));
+                gamecanvas.Children.Add(border);
+                bullets.Add(border);
+            }
+
         }
         private void moveBullet()
         {
@@ -335,6 +369,26 @@ namespace SpaceWars
             return intersect;
         }
 
+        private void intersectEnemyPlayer()
+        {
+            List<Enemy> enemyids = new List<Enemy>();
+
+            foreach (Enemy enemys in enemies)
+            {
+                if (enemys.intersectEnemyPlayer(player))
+                {
+                    enemyids.Add(enemys);
+                }
+            }
+
+            foreach (Enemy enemy in enemyids)
+            {
+                enemies.Remove(enemy);
+                gamecanvas.Children.Remove(enemy);
+                details.ActualHP = -10;
+            }
+        }
+
 
 
         //-----------------------------------------------Player mozgása
@@ -353,6 +407,18 @@ namespace SpaceWars
 
         private void Grid_KeyUp(object sender, KeyEventArgs e)
         {
+            if(e.Key == Key.Escape)
+            {
+                pause = !pause;
+                if (pause)
+                {
+                    pauselabel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    pauselabel.Visibility = Visibility.Hidden;
+                }
+            }
             if (e.Key == Key.A)
             {
                 left = false;
@@ -370,6 +436,21 @@ namespace SpaceWars
             details.Playerspeed += 2;
             details.Money -= details.Upgradecosts[0];
             details.Upgradecosts[0] *= 2; 
+        }
+
+
+        private void NewGame_Click(object sender, RoutedEventArgs e)
+        {
+            details = new GameDetails(true);
+            foreach(Enemy enemy in enemies)
+            {
+                gamecanvas.Children.Remove(enemy);
+            }
+            enemies.Clear();
+            gameover = false;
+            gameoverlabel.Visibility = Visibility.Hidden;
+            GameOverButtons.Visibility = Visibility.Hidden;
+            UpgradeButtons.Visibility = Visibility.Visible;
         }
 
         private void Income_Click(object sender, RoutedEventArgs e)
@@ -399,6 +480,12 @@ namespace SpaceWars
             details.Hpregen += 5;
             details.Money -= details.Upgradecosts[4];
             details.Upgradecosts[4] *= 2;
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            File.Delete("savegame.json");
+            Application.Current.Shutdown();
         }
     }
 
@@ -442,6 +529,27 @@ namespace SpaceWars
 
             return false;
         }
+
+        public bool intersectEnemyPlayer(Image player)
+        {
+
+            if (Canvas.GetTop(player) <= Canvas.GetTop(this))
+            {
+                if (Canvas.GetLeft(this) >= Canvas.GetLeft(player) && Canvas.GetLeft(this) <= Canvas.GetLeft(player) + Width)
+                {
+                    return true;
+                }
+
+                if (Canvas.GetLeft(this) <= Canvas.GetLeft(player) && Canvas.GetLeft(this) + Width >= Canvas.GetLeft(player))
+                {
+                    return true;
+                }
+            }
+
+
+
+            return false;
+        }
         public bool intersectBullet(Border bullet)
         {
             bool intersecting = false;
@@ -476,11 +584,30 @@ namespace SpaceWars
         private int firerate;
         private int actualHP;
         private int progressed;
-        int[]? upgradecosts;
+        int[] upgradecosts;
 
 
         public GameDetails(Boolean gameover)
         {
+            if (File.Exists("savegame.json") && !gameover)
+            {
+                string json = File.ReadAllText("savegame.json");
+                JObject obj = JObject.Parse(json);
+                this.maxenemys = obj["Maxenemys"]!.Value<int>();
+                this.score = obj["Score"]!.Value<int>();
+                this.money = obj["Money"]!.Value<int>();
+                this.maxhp = obj["Maxhp"]!.Value<int>();
+                this.hpregen = obj["Hpregen"]!.Value<int>();
+                this.playerspeed = obj["Playerspeed"]!.Value<int>();
+                this.enemyspeed = obj["Enemyspeed"]!.Value<double>();
+                this.income = obj["Income"]!.Value<double>();
+                this.actualHP = obj["ActualHP"]!.Value<int>();
+                this.progressed = obj["Progressed"]!.Value<int>();
+                this.firerate = obj["Firerate"]!.Value<int>();
+                this.upgradecosts = obj["Upgradecosts"]!.Select(x => x.Value<int>()).ToArray();
+            }
+            else
+            {
                 Maxenemys = 3;
                 Score = 0;
                 Money = 0;
@@ -494,50 +621,12 @@ namespace SpaceWars
                 Progressed = 30;
                 firerate = 1000;
                 upgradecosts = [10, 10, 10, 10, 10];
+            }
+
                 save();
         }
 
 
-        public GameDetails()
-        {
-            GameDetails gameDetails = load();
-            if(gameDetails != null)
-            {
-                Maxenemys = gameDetails.Maxenemys;
-                Score = gameDetails.Score;
-                Money = gameDetails.Money;
-                Playerspeed = gameDetails.Playerspeed;
-                Income = gameDetails.Income;
-                enemyspeed = gameDetails.Enemyspeed;
-                Firerate = gameDetails.Firerate;
-                Maxhp = gameDetails.Maxhp;
-                hpregen = gameDetails.Hpregen;
-                actualHP = gameDetails.ActualHP;
-                Progressed = gameDetails.Progressed;
-                firerate = gameDetails.Firerate;
-                upgradecosts = gameDetails.Upgradecosts;
-            }
-            else
-            {
-                new GameDetails(true);
-            }
-
-
-        }
-
-        public GameDetails load()
-        {
-            try
-            {
-                GameDetails detail = JsonConvert.DeserializeObject<GameDetails>(File.ReadAllText("savegame.json"));
-                return detail;
-            }catch (Exception ex)
-            {
-                return new GameDetails();
-            }
-
-
-        }
 
         public void save()
         {

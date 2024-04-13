@@ -10,16 +10,17 @@
       Title="Game">
 
     <Grid KeyDown="Grid_KeyDown" KeyUp="Grid_KeyUp">
+
         <Rectangle HorizontalAlignment="Center" Height="25" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="Black"/>
         <Label x:Name="Score" Content="Score: 0" HorizontalAlignment="Left" Margin="285,-1,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold"/>
         <Canvas x:Name="gamecanvas" Height="600" Margin="0,30,0,220">
             <Image gif:ImageBehavior.AnimatedSource="Resources/background.gif" Height="636" Width="700" Stretch="Fill" HorizontalAlignment="Center" Canvas.Top="-6" VerticalAlignment="Top" />
-            <Image x:Name="player" Height="100" Width="100" Source="/Resources/player.png" Canvas.Bottom="0" Canvas.Left="300"/>
+            <Image x:Name="player" Height="100" Width="100" Source="/Resources/player.png" Canvas.Left="300" HorizontalAlignment="Center" Canvas.Top="500" VerticalAlignment="Top"/>
         </Canvas>
         <Rectangle HorizontalAlignment="Center" Height="180" Margin="0,670,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Grid.Column="1" Fill="Black" />
         <Rectangle HorizontalAlignment="Center" Height="40" Margin="0,630,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="#FF737373"/>
 
-        <Grid Margin="0,670,0,0" Height="180">
+        <Grid x:Name="UpgradeButtons" Margin="0,670,0,0" Height="180" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -34,11 +35,24 @@
             <Button x:Name="MaxHP" Content="MaxHP" Grid.Column="3" Height="78" Width="79" Click="MaxHP_Click"/>
             <Button x:Name="HP_Regen" Content="HP Regen" Grid.Column="4" Height="78" Width="79" Click="HP_Regen_Click"/>
         </Grid>
+        <Grid x:Name="GameOverButtons" Margin="0,670,0,0" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Exit" Grid.Column="0" Height="78" Width="79" Click="Exit_Click"/>
+            <Button Content="New Game" Grid.Column="1" Height="78" Width="79" Click="NewGame_Click"/>
+        </Grid>
         <Rectangle x:Name="actualHPvisual" HorizontalAlignment="Left" Height="40" Margin="0,630,0,0" Stroke="Black" VerticalAlignment="Top" Width="700" Fill="#FF26FF08"/>
         <Label x:Name="actualhptext" Content="100 hp" HorizontalAlignment="Center" Margin="0,632,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.447,-0.019" FontSize="20" FontWeight="Bold" Foreground="White"/>
         <Label x:Name="MaxHP_Text" Content="100 hp" HorizontalAlignment="Left" Margin="626,632,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.447,-0.019" FontSize="20" FontWeight="Bold" Foreground="White"/>
         <Label x:Name="_0hp" Content="0 hp" HorizontalAlignment="Left" Margin="0,632,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.447,-0.019" FontSize="20" FontWeight="Bold" Foreground="White"/>
         <Label x:Name="Money" Content="0 Coin" HorizontalAlignment="Left" Margin="380,-1,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold"/>
-
+        <Label x:Name="pauselabel" Content="Game Paused" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Bahnschrift SemiBold Condensed" FontSize="64" Foreground="White" Visibility="Hidden"/>
+        <Grid x:Name="Gameoverpopup" Visibility="Hidden">
+            <Label x:Name="gameoverlabel" Content="Game Over" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Bahnschrift SemiBold Condensed" FontSize="64" Foreground="White" Visibility="Visible"/>
+            
+        </Grid>
+        
     </Grid>
 </Page>
