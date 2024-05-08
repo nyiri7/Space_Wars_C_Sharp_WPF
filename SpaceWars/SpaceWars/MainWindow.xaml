@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpaceWars"
         mc:Ignorable="d"
-        Title="MainWindow" Height="850" Width="700">
+        Title="SpaceWars" Height="850" Width="700" ResizeMode="NoResize">
     <Grid>
         <Image gif:ImageBehavior.AnimatedSource="Resources/Main.gif" Height="834" Width="700" Stretch="Fill" HorizontalAlignment="Center" Canvas.Top="-6" VerticalAlignment="Center" />
         <Button Content="Play" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#B2000000" Foreground="White" BorderBrush="{x:Null}" BorderThickness="1" FontWeight="Bold" FontSize="16" Padding="10,5" Margin="0,360,0,0" Width="200" Height="100" Click="playOnClick"/>

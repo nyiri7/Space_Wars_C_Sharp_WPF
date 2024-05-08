@@ -134,13 +134,10 @@ namespace SpaceWars
             {
                 if (details.Score == details.Progressed)
                 {
-                    details.save();
                     details.Enemyspeed += 0.1;
                     details.Progressed *= 2;
                     details.Maxenemys += 1;
                 }
-
-
                 if (details.Money < details.Upgradecosts[0])
                 {
                     Horizontalspeedbtn.IsEnabled = false;
@@ -589,50 +586,21 @@ namespace SpaceWars
 
         public GameDetails(Boolean gameover)
         {
-            if (File.Exists("savegame.json") && !gameover)
-            {
-                string json = File.ReadAllText("savegame.json");
-                JObject obj = JObject.Parse(json);
-                this.maxenemys = obj["Maxenemys"]!.Value<int>();
-                this.score = obj["Score"]!.Value<int>();
-                this.money = obj["Money"]!.Value<int>();
-                this.maxhp = obj["Maxhp"]!.Value<int>();
-                this.hpregen = obj["Hpregen"]!.Value<int>();
-                this.playerspeed = obj["Playerspeed"]!.Value<int>();
-                this.enemyspeed = obj["Enemyspeed"]!.Value<double>();
-                this.income = obj["Income"]!.Value<double>();
-                this.actualHP = obj["ActualHP"]!.Value<int>();
-                this.progressed = obj["Progressed"]!.Value<int>();
-                this.firerate = obj["Firerate"]!.Value<int>();
-                this.upgradecosts = obj["Upgradecosts"]!.Select(x => x.Value<int>()).ToArray();
-            }
-            else
-            {
-                Maxenemys = 3;
-                Score = 0;
-                Money = 0;
-                Playerspeed = 10;
-                Income = 10;
-                enemyspeed = 1;
-                Firerate = 1000;
-                Maxhp = 100;
-                hpregen = 0;
-                actualHP = 100;
-                Progressed = 30;
-                firerate = 1000;
-                upgradecosts = [10, 10, 10, 10, 10];
-            }
-
-                save();
+            Maxenemys = 3;
+            Score = 0;
+            Money = 0;
+            Playerspeed = 10;
+            Income = 10;
+            enemyspeed = 1;
+            Firerate = 1000;
+            Maxhp = 100;
+            hpregen = 0;
+            actualHP = 100;
+            Progressed = 30;
+            firerate = 1000;
+            upgradecosts = [10, 10, 10, 10, 10];
         }
 
-
-
-        public void save()
-        {
-            ;
-            File.WriteAllText("savegame.json", JsonConvert.SerializeObject(this));
-        }
 
         public int Maxenemys { get => maxenemys; set => maxenemys = value; }
         public int Score { get => score; set => score = value; }
